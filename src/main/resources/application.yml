@@ -1,4 +1,5 @@
-
+server:
+  port: 8088
 
 repo:
   path: /home/sergey/Github/test-bank-github/repo
@@ -6,3 +7,5 @@ repo:
 github:
   username:
   password:
+  repoName: SergeyPirogov/test-bank
+  baseBranch: master

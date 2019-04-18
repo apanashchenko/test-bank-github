@@ -26,6 +26,9 @@ public class TestCaseService {
     @Value("${github.password}")
     private String password;
 
+    @Value("${github.baseBranch}")
+    private String baseBranch;
+
     public void createTestCase(CreateTestCasePayload createTestCasePayload) {
         final File repo = new File(repoPath + "/.git");
 
@@ -33,6 +36,10 @@ public class TestCaseService {
 
         try {
             Git git = Git.open(repo);
+
+            git.checkout()
+                    .setName(baseBranch)
+                    .call();
 
             git.checkout()
                     .setCreateBranch(true)
