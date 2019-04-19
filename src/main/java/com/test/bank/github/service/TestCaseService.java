@@ -9,6 +9,7 @@ import com.test.bank.github.dto.Branch;
 import com.test.bank.github.dto.Committer;
 import com.test.bank.github.dto.GitHubTestCase;
 import com.test.bank.github.dto.TestCaseDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +23,8 @@ import java.util.Base64;
 @Service
 public class TestCaseService {
 
-    @Value("${github.username}")
-    private String userName;
-
-    @Value("${github.password}")
-    private String password;
+    @Autowired
+    private Github github;
 
     @Value("${github.baseBranch}")
     private String baseBranch;
@@ -35,7 +33,6 @@ public class TestCaseService {
     private String repoName;
 
     public void createTestCase(TestCaseDTO testCaseDTO) {
-        Github github = new RtGithub(userName, password);
         Repo gitHubRepo = github.repos().get(new Coordinates.Simple(repoName));
 
         ObjectMapper mapper = new ObjectMapper();

@@ -3,6 +3,7 @@ package com.test.bank.github.service;
 import com.jcabi.github.*;
 import com.test.bank.github.dto.PullRequestDTO;
 import com.test.bank.github.response.PullRequestResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +12,8 @@ import java.io.IOException;
 @Service
 public class PullRequestService {
 
-    @Value("${github.username}")
-    private String userName;
-
-    @Value("${github.password}")
-    private String password;
+    @Autowired
+    private Github github;
 
     @Value("${github.repoName}")
     private String repoName;
@@ -24,7 +22,6 @@ public class PullRequestService {
     private String baseBranch;
 
     public PullRequestResponse createPullRequest(PullRequestDTO pullRequestDTO) {
-        Github github = new RtGithub(userName, password);
         Repo repo = github.repos().get(new Coordinates.Simple(repoName));
 
         try {
