@@ -9,8 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.Map;
-
 import static java.util.Collections.singletonMap;
 
 @Controller
@@ -20,9 +18,9 @@ public class TestCaseController {
     private final TestCaseService testCaseService;
 
     @PostMapping("/case")
-    public ResponseEntity<Map<String, Integer>> createTestCase(@RequestBody TestCaseDTO testCaseDTO)  {
-        testCaseService.createTestCase(testCaseDTO);
-        return new ResponseEntity<>(singletonMap("id", 1), HttpStatus.OK);
+    public ResponseEntity createTestCase(@RequestBody TestCaseDTO testCaseDTO) {
+        String path = testCaseService.createTestCase(testCaseDTO).path();
+        return new ResponseEntity<>(singletonMap("path", path), HttpStatus.OK);
     }
 
 }

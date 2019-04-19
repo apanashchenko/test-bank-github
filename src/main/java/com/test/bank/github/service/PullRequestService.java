@@ -15,19 +15,27 @@ public class PullRequestService {
     @Autowired
     private Github github;
 
-    @Value("${github.repoName}")
-    private String repoName;
+    @Autowired
+    private Repo repo;
 
     @Value("${github.baseBranch}")
     private String baseBranch;
 
     public PullRequestResponse createPullRequest(PullRequestDTO pullRequestDTO) {
-        Repo repo = github.repos().get(new Coordinates.Simple(repoName));
-
         try {
             Pull pullRequest = repo.pulls().create(pullRequestDTO.getTitle(), pullRequestDTO.getBranchName(), baseBranch);
 
             return new PullRequestResponse(pullRequest.number(), pullRequest.json().toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public MergeState mergePullRequest(int id) {
+        try {
+            Pull pull = repo.pulls().get(id);
+
+            return pull.merge("Merge " + id, pull.head().sha());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

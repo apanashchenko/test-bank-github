@@ -1,10 +1,7 @@
 package com.test.bank.github.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jcabi.github.Coordinates;
-import com.jcabi.github.Github;
-import com.jcabi.github.Repo;
-import com.jcabi.github.RtGithub;
+import com.jcabi.github.*;
 import com.test.bank.github.dto.Branch;
 import com.test.bank.github.dto.Committer;
 import com.test.bank.github.dto.GitHubTestCase;
@@ -32,7 +29,7 @@ public class TestCaseService {
     @Value("${github.repoName}")
     private String repoName;
 
-    public void createTestCase(TestCaseDTO testCaseDTO) {
+    public Content createTestCase(TestCaseDTO testCaseDTO) {
         Repo gitHubRepo = github.repos().get(new Coordinates.Simple(repoName));
 
         ObjectMapper mapper = new ObjectMapper();
@@ -62,10 +59,10 @@ public class TestCaseService {
             JsonObject jsonObject = jsonReader.readObject();
             jsonReader.close();
 
-            gitHubRepo.contents().create(jsonObject);
+            return gitHubRepo.contents().create(jsonObject);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
