@@ -15,13 +15,16 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Base64;
+import java.util.*;
 
 @Service
 public class TestCaseService {
 
     @Autowired
     private Github github;
+
+    @Autowired
+    private Repo gitHubRepo;
 
     @Value("${github.baseBranch}")
     private String baseBranch;
@@ -32,9 +35,8 @@ public class TestCaseService {
     @Value("${github.cases}")
     private String casesFolder;
 
-    public Content createTestCase(TestCaseDTO testCaseDTO) {
-        Repo gitHubRepo = github.repos().get(new Coordinates.Simple(repoName));
 
+    public Content createTestCase(TestCaseDTO testCaseDTO) {
         ObjectMapper mapper = new ObjectMapper();
 
         try {
@@ -69,4 +71,25 @@ public class TestCaseService {
         }
     }
 
+    public List<JsonObject> getAllCases() {
+        try {
+            List<JsonObject> jsonObjectList = new ArrayList<>();
+
+            Iterator<Content> iterator = gitHubRepo.contents()
+                    .iterate("/" + casesFolder, "master").iterator();
+
+            iterator.forEachRemaining(it -> {
+                try {
+                    jsonObjectList.add(it.json());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
+
+            return jsonObjectList;
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

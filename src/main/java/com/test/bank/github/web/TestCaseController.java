@@ -6,12 +6,15 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
+
+import javax.json.JsonObject;
+
+import java.util.List;
 
 import static java.util.Collections.singletonMap;
 
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class TestCaseController {
 
@@ -21,6 +24,11 @@ public class TestCaseController {
     public ResponseEntity createTestCase(@RequestBody TestCaseDTO testCaseDTO) {
         String path = testCaseService.createTestCase(testCaseDTO).path();
         return new ResponseEntity<>(singletonMap("path", path), HttpStatus.OK);
+    }
+
+    @GetMapping("/cases")
+    public List<JsonObject> getAllCases() {
+        return testCaseService.getAllCases();
     }
 
 }

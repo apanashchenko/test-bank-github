@@ -1,9 +1,6 @@
 server:
   port: 8088
 
-repo:
-  path: /home/sergey/Github/test-bank-github/repo
-
 github:
   username:
   password:
