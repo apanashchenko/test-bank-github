@@ -29,6 +29,9 @@ public class TestCaseService {
     @Value("${github.repoName}")
     private String repoName;
 
+    @Value("${github.cases}")
+    private String casesFolder;
+
     public Content createTestCase(TestCaseDTO testCaseDTO) {
         Repo gitHubRepo = github.repos().get(new Coordinates.Simple(repoName));
 
@@ -45,7 +48,7 @@ public class TestCaseService {
             GitHubTestCase testCaseGitHub = new GitHubTestCase();
             testCaseGitHub.setMessage(testCaseDTO.getTitle());
             testCaseGitHub.setBranch(testCaseDTO.getBranch());
-            testCaseGitHub.setPath(testCaseDTO.getFileName() + ".json");
+            testCaseGitHub.setPath(casesFolder + testCaseDTO.getFileName() + ".json");
 
             Committer committer = new Committer();
             committer.setName(testCaseDTO.getUserName());

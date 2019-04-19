@@ -9,3 +9,4 @@ github:
   password:
   repoName: SergeyPirogov/test-bank
   baseBranch: master
+  cases: cases/
