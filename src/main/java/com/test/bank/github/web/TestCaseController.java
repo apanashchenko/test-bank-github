@@ -1,7 +1,6 @@
 package com.test.bank.github.web;
 
 import com.test.bank.github.dto.TestCaseDTO;
-import com.test.bank.github.payload.CreateTestCasePayload;
 import com.test.bank.github.service.TestCaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,9 +20,8 @@ public class TestCaseController {
     private final TestCaseService testCaseService;
 
     @PostMapping("/case")
-    public ResponseEntity<Map<String, Integer>> createTestCase(@RequestBody CreateTestCasePayload createTestCasePayload){
-        testCaseService.createTestCase(createTestCasePayload);
-
+    public ResponseEntity<Map<String, Integer>> createTestCase(@RequestBody TestCaseDTO testCaseDTO)  {
+        testCaseService.createTestCase(testCaseDTO);
         return new ResponseEntity<>(singletonMap("id", 1), HttpStatus.OK);
     }
 
