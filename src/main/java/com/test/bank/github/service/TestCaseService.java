@@ -6,6 +6,7 @@ import com.test.bank.github.dto.Branch;
 import com.test.bank.github.dto.Committer;
 import com.test.bank.github.dto.GitHubTestCase;
 import com.test.bank.github.dto.TestCaseDTO;
+import com.test.bank.github.response.TestCaseResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import javax.json.JsonReader;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class TestCaseService {
@@ -71,25 +73,32 @@ public class TestCaseService {
         }
     }
 
-    public List<JsonObject> getAllCases() {
+    public List<TestCaseResponse> getAllCases() {
         try {
-            List<JsonObject> jsonObjectList = new ArrayList<>();
+            List<TestCaseResponse> list = new ArrayList<>();
 
-            Iterator<Content> iterator = gitHubRepo.contents()
-                    .iterate("/" + casesFolder, "master").iterator();
+            gitHubRepo.contents()
+                    .iterate("/" + casesFolder, "master")
+                    .iterator()
+                    .forEachRemaining(it -> list.add(extractValue(it)));
 
-            iterator.forEachRemaining(it -> {
-                try {
-                    jsonObjectList.add(it.json());
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            });
-
-            return jsonObjectList;
-
+            return list.stream().filter(it -> it.getName().endsWith(".json")).collect(Collectors.toList());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private TestCaseResponse extractValue(Content jsonObject) {
+        JsonObject json;
+        try {
+            json = jsonObject.json();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        TestCaseResponse caseResponse = new TestCaseResponse();
+        caseResponse.setName(json.getString("name"));
+        caseResponse.setContent(json.getString("content"));
+        return caseResponse;
     }
 }
