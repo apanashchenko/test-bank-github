@@ -20,7 +20,7 @@ public class TestCaseController {
 
     @PostMapping("/case")
     public ResponseEntity createTestCase(@RequestBody TestCaseDTO testCaseDTO) {
-        String path = testCaseService.createTestCase(testCaseDTO).path();
+        String path = testCaseService.createTestCase(testCaseDTO);
         return new ResponseEntity<>(singletonMap("path", path), HttpStatus.OK);
     }
 

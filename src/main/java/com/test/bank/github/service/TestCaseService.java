@@ -31,7 +31,7 @@ public class TestCaseService {
     @Value("${github.cases}")
     private String casesFolder;
 
-    public Content createTestCase(TestCaseDTO testCaseDTO) {
+    public String createTestCase(TestCaseDTO testCaseDTO) {
         ObjectMapper mapper = new ObjectMapper();
 
         try {
@@ -61,7 +61,7 @@ public class TestCaseService {
             JsonObject jsonObject = jsonReader.readObject();
             jsonReader.close();
 
-            return repo.contents().create(jsonObject);
+            return repo.contents().create(jsonObject).path();
 
         } catch (IOException e) {
             throw new RuntimeException(e);
