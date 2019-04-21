@@ -16,14 +16,15 @@ public class PullRequestService {
     private Github github;
 
     @Autowired
-    private Repo repo;
+    private ProjectService projectService;
 
     @Value("${github.baseBranch}")
     private String baseBranch;
 
     public PullRequestResponse createPullRequest(PullRequestDTO pullRequestDTO) {
         try {
-            Pull pullRequest = repo.pulls().create(pullRequestDTO.getTitle(), pullRequestDTO.getBranchName(), baseBranch);
+            Pull pullRequest = projectService.getRepo(pullRequestDTO.getRepoName()).pulls()
+                    .create(pullRequestDTO.getTitle(), pullRequestDTO.getBranchName(), baseBranch);
 
             return new PullRequestResponse(pullRequest.number(), pullRequest.json().toString());
         } catch (IOException e) {
@@ -31,11 +32,11 @@ public class PullRequestService {
         }
     }
 
-    public MergeState mergePullRequest(int id) {
+    public MergeState mergePullRequest(PullRequestDTO pullRequestDTO) {
         try {
-            Pull pull = repo.pulls().get(id);
+            Pull pull = projectService.getRepo(pullRequestDTO.getRepoName()).pulls().get(pullRequestDTO.getId());
 
-            return pull.merge("Merge " + id, pull.head().sha());
+            return pull.merge("Merge " + pullRequestDTO.getId(), pull.head().sha());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

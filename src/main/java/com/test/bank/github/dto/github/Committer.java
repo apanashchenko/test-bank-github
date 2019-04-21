@@ -1,4 +1,4 @@
-package com.test.bank.github.dto;
+package com.test.bank.github.dto.github;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;

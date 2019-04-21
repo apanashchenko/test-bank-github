@@ -21,9 +21,9 @@ public class PullRequestsController {
         return pullRequestService.createPullRequest(pullRequestDTO);
     }
 
-    @PostMapping("/pull-request/{id}/merge")
-    public PullRequestMergeResponse mergePullRequest(@PathVariable int id) {
-        MergeState merged = pullRequestService.mergePullRequest(id);
+    @PostMapping("/pull-request/merge")
+    public PullRequestMergeResponse mergePullRequest(PullRequestDTO pullRequestDTO) {
+        MergeState merged = pullRequestService.mergePullRequest(pullRequestDTO);
         return new PullRequestMergeResponse(merged);
     }
 }

@@ -1,14 +1,16 @@
 package com.test.bank.github.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
-@AllArgsConstructor(staticName = "of")
+@NoArgsConstructor
 public class InitProjectResponse {
 
-    private String path;
+    private String name;
+
+//    TODO maybe need add more fields
 
 }

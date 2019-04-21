@@ -2,9 +2,9 @@ package com.test.bank.github.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcabi.github.*;
-import com.test.bank.github.dto.Branch;
-import com.test.bank.github.dto.Committer;
-import com.test.bank.github.dto.GitHubTestCase;
+import com.test.bank.github.dto.github.Branch;
+import com.test.bank.github.dto.github.Committer;
+import com.test.bank.github.dto.github.GitHubTestCase;
 import com.test.bank.github.dto.TestCaseDTO;
 import com.test.bank.github.response.TestCaseResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,26 +26,24 @@ public class TestCaseService {
     private Github github;
 
     @Autowired
-    private Repo gitHubRepo;
+    private ProjectService projectService;
 
     @Value("${github.baseBranch}")
     private String baseBranch;
 
-    @Value("${github.repoName}")
-    private String repoName;
-
     @Value("${github.cases}")
     private String casesFolder;
-
 
     public Content createTestCase(TestCaseDTO testCaseDTO) {
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            String refJson = gitHubRepo.git().references().get("refs/heads/" + baseBranch).json().toString();
+            String refJson = projectService.getRepo(testCaseDTO.getProjectName()).git().references()
+                    .get("refs/heads/" + baseBranch).json().toString();
             Branch branch = mapper.readValue(refJson, Branch.class);
 
-            String createBranchRes = gitHubRepo.git().references().create("refs/heads/" + testCaseDTO.getBranch(),
+            String createBranchRes = projectService.getRepo(testCaseDTO.getProjectName()).git().references()
+                    .create("refs/heads/" + testCaseDTO.getBranch(),
                     branch.getObject().getSha()).json().toString();
             System.out.println(createBranchRes);
 
@@ -66,18 +64,18 @@ public class TestCaseService {
             JsonObject jsonObject = jsonReader.readObject();
             jsonReader.close();
 
-            return gitHubRepo.contents().create(jsonObject);
+            return projectService.getRepo(testCaseDTO.getProjectName()).contents().create(jsonObject);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public List<TestCaseResponse> getAllCases() {
+    public List<TestCaseResponse> getAllCases(String repoName) {
         try {
             List<TestCaseResponse> list = new ArrayList<>();
 
-            gitHubRepo.contents()
+            projectService.getRepo(repoName).contents()
                     .iterate("/" + casesFolder, "master")
                     .iterator()
                     .forEachRemaining(it -> list.add(extractValue(it)));

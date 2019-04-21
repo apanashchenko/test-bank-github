@@ -24,9 +24,9 @@ public class TestCaseController {
         return new ResponseEntity<>(singletonMap("path", path), HttpStatus.OK);
     }
 
-    @GetMapping("/cases")
-    public List<TestCaseResponse> getAllCases() {
-        return testCaseService.getAllCases();
+    @GetMapping("/cases/{projectName}")
+    public List<TestCaseResponse> getAllCases(@PathVariable String repoName) {
+        return testCaseService.getAllCases(repoName);
     }
 
 }
