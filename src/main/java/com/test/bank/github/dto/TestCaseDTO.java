@@ -20,7 +20,7 @@ public class TestCaseDTO {
     private String fileName;
     @ApiModelProperty(example = "login-test-case")
     private String branch;
-    @ApiModelProperty(example = "project name")
-    private String projectName;
+    @ApiModelProperty(example = "repo-name")
+    private String repoName;
 
 }

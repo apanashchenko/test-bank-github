@@ -23,9 +23,6 @@ import java.util.stream.Collectors;
 public class TestCaseService {
 
     @Autowired
-    private Github github;
-
-    @Autowired
     private ProjectService projectService;
 
     @Value("${github.baseBranch}")
@@ -38,11 +35,11 @@ public class TestCaseService {
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            String refJson = projectService.getRepo(testCaseDTO.getProjectName()).git().references()
-                    .get("refs/heads/" + baseBranch).json().toString();
+            Repo repo = projectService.getRepo(testCaseDTO.getRepoName());
+            String refJson = repo.git().references().get("refs/heads/" + baseBranch).json().toString();
             Branch branch = mapper.readValue(refJson, Branch.class);
 
-            String createBranchRes = projectService.getRepo(testCaseDTO.getProjectName()).git().references()
+            String createBranchRes = repo.git().references()
                     .create("refs/heads/" + testCaseDTO.getBranch(),
                     branch.getObject().getSha()).json().toString();
             System.out.println(createBranchRes);
@@ -64,7 +61,7 @@ public class TestCaseService {
             JsonObject jsonObject = jsonReader.readObject();
             jsonReader.close();
 
-            return projectService.getRepo(testCaseDTO.getProjectName()).contents().create(jsonObject);
+            return repo.contents().create(jsonObject);
 
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -76,7 +73,7 @@ public class TestCaseService {
             List<TestCaseResponse> list = new ArrayList<>();
 
             projectService.getRepo(repoName).contents()
-                    .iterate("/" + casesFolder, "master")
+                    .iterate("/" + casesFolder, baseBranch)
                     .iterator()
                     .forEachRemaining(it -> list.add(extractValue(it)));
 
