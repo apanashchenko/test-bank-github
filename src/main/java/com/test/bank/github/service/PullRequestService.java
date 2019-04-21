@@ -1,6 +1,7 @@
 package com.test.bank.github.service;
 
 import com.jcabi.github.*;
+import com.test.bank.github.dto.MergeRequestDTO;
 import com.test.bank.github.dto.PullRequestDTO;
 import com.test.bank.github.response.PullRequestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,9 +12,6 @@ import java.io.IOException;
 
 @Service
 public class PullRequestService {
-
-    @Autowired
-    private Github github;
 
     @Autowired
     private ProjectService projectService;
@@ -32,11 +30,11 @@ public class PullRequestService {
         }
     }
 
-    public MergeState mergePullRequest(PullRequestDTO pullRequestDTO) {
+    public MergeState mergePullRequest(MergeRequestDTO mergeRequestDTO) {
         try {
-            Pull pull = projectService.getRepo(pullRequestDTO.getRepoName()).pulls().get(pullRequestDTO.getId());
+            Pull pull = projectService.getRepo(mergeRequestDTO.getRepoName()).pulls().get(mergeRequestDTO.getId());
 
-            return pull.merge("Merge " + pullRequestDTO.getId(), pull.head().sha());
+            return pull.merge("Merge " + mergeRequestDTO.getId(), pull.head().sha());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
