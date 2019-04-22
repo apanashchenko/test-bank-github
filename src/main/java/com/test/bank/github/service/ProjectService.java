@@ -40,7 +40,7 @@ public class ProjectService {
 
     public Repo getRepo(String repoName) {
         try {
-            return github.repos().get(new Coordinates.Simple(user.login() + "/" +  repoName));
+            return github.repos().get(new Coordinates.Simple(user.login() + "/" + repoName));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -92,4 +92,12 @@ public class ProjectService {
         return gitHubUser;
     }
 
+    public boolean deleteProject(String repoName) {
+        try {
+            github.repos().remove(new Coordinates.Simple(user.login() + "/" + repoName));
+            return true;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

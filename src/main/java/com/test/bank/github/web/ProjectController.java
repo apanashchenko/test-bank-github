@@ -1,6 +1,7 @@
 package com.test.bank.github.web;
 
 import com.test.bank.github.dto.ProjectDTO;
+import com.test.bank.github.response.DeleteProjectResponse;
 import com.test.bank.github.response.InitProjectResponse;
 import com.test.bank.github.service.ProjectService;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +28,11 @@ public class ProjectController {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @DeleteMapping("/project/{repoName}")
+    public DeleteProjectResponse deleteProject(@PathVariable String repoName){
+        return new DeleteProjectResponse(projectService.deleteProject(repoName));
     }
 
 }
