@@ -1,5 +1,6 @@
 package com.test.bank.github;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jcabi.github.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -24,4 +25,8 @@ public class AppConfig {
         return github().users().self();
     }
 
+    @Bean
+    public ObjectMapper objectMapper(){
+        return new ObjectMapper();
+    }
 }

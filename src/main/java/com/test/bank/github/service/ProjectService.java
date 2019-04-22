@@ -35,6 +35,9 @@ public class ProjectService {
     @Value("${github.cases}")
     private String casesFolder;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     public Repo getRepo(String repoName) {
         try {
             return github.repos().get(new Coordinates.Simple(user.login() + "/" +  repoName));
@@ -56,8 +59,6 @@ public class ProjectService {
             testCaseGitHub.setBranch(baseBranch);
             testCaseGitHub.setPath(casesFolder + "README.md");
 
-            ObjectMapper mapper = new ObjectMapper();
-
             GitHubUser gitHubUser = getGitHubUser();
 
             Committer committer = new Committer();
@@ -67,7 +68,7 @@ public class ProjectService {
             testCaseGitHub.setCommitter(committer);
             testCaseGitHub.setContent(Base64.getEncoder().encodeToString("Test case storage folder".getBytes()));
 
-            JsonReader jsonReader = Json.createReader(new StringReader(mapper.writeValueAsString(testCaseGitHub)));
+            JsonReader jsonReader = Json.createReader(new StringReader(objectMapper.writeValueAsString(testCaseGitHub)));
             JsonObject jsonObject = jsonReader.readObject();
             jsonReader.close();
 
@@ -82,10 +83,9 @@ public class ProjectService {
         }
     }
 
-    private GitHubUser getGitHubUser() throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
 
-        GitHubUser gitHubUser = mapper.readValue(user.json().toString(), GitHubUser.class);
+    private GitHubUser getGitHubUser() throws IOException {
+        GitHubUser gitHubUser = objectMapper.readValue(user.json().toString(), GitHubUser.class);
         UserEmails emails = user.emails();
         String activeEmail = Iterables.getFirst(emails.iterate(), "");
         gitHubUser.setEmail(activeEmail);
