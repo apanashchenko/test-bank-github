@@ -34,6 +34,9 @@ public class TestCaseService {
 
     public String createTestCase(GitHubTestCaseDTO gitHubTestCaseDTO) {
         try {
+            String path = gitHubTestCaseDTO.getPath();
+            gitHubTestCaseDTO.setPath(casesFolder + path);
+
             Repo repo = projectService.getRepo(gitHubTestCaseDTO.getRepoName());
             String refJson = repo.git().references().get("refs/heads/" + baseBranch).json().toString();
 
