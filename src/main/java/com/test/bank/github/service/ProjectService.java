@@ -5,7 +5,7 @@ import com.google.common.collect.Iterables;
 import com.jcabi.github.*;
 import com.test.bank.github.dto.*;
 import com.test.bank.github.dto.github.Committer;
-import com.test.bank.github.dto.github.GitHubTestCase;
+import com.test.bank.github.dto.github.GitHubTestCaseDTO;
 import com.test.bank.github.dto.github.GitHubUser;
 import com.test.bank.github.response.InitProjectResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +54,7 @@ public class ProjectService {
                     .withDescription(projectDTO.getDescription());
 
             JsonObject json = github.repos().create(settings).json();
-            GitHubTestCase testCaseGitHub = new GitHubTestCase();
+            GitHubTestCaseDTO testCaseGitHub = new GitHubTestCaseDTO();
             testCaseGitHub.setMessage("Init cases repo");
             testCaseGitHub.setBranch(baseBranch);
             testCaseGitHub.setPath(casesFolder + "README.md");
@@ -72,7 +72,7 @@ public class ProjectService {
             JsonObject jsonObject = jsonReader.readObject();
             jsonReader.close();
 
-            JsonObject response = getRepo(repoName).contents().create(jsonObject).json();
+            getRepo(repoName).contents().create(jsonObject).json();
 
             InitProjectResponse initProjectResponse = new InitProjectResponse();
             initProjectResponse.setName(json.getString("name"));

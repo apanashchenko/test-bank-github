@@ -7,7 +7,6 @@ import lombok.Setter;
 @Setter
 public class PullRequestDTO {
 
-    private int id;
     private String branchName;
     public String title;
     public String repoName;

@@ -1,14 +1,9 @@
 package com.test.bank.github.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.jcabi.github.*;
 import com.test.bank.github.dto.github.Branch;
-import com.test.bank.github.dto.github.Committer;
-import com.test.bank.github.dto.github.GitHubTestCase;
-import com.test.bank.github.dto.TestCaseDTO;
-import com.test.bank.github.entity.TestCase;
+import com.test.bank.github.dto.github.GitHubTestCaseDTO;
 import com.test.bank.github.response.TestCaseResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,22 +32,20 @@ public class TestCaseService {
     @Autowired
     private ObjectMapper objectMapper;
 
-    public String createTestCase(TestCaseDTO testCaseDTO) {
+    public String createTestCase(GitHubTestCaseDTO gitHubTestCaseDTO) {
         try {
-            Repo repo = projectService.getRepo(testCaseDTO.getRepoName());
+            Repo repo = projectService.getRepo(gitHubTestCaseDTO.getRepoName());
             String refJson = repo.git().references().get("refs/heads/" + baseBranch).json().toString();
 
             Branch branch = objectMapper.readValue(refJson, Branch.class);
 
             String createBranchRes = repo.git().references()
-                    .create("refs/heads/" + testCaseDTO.getBranch(),
+                    .create("refs/heads/" + gitHubTestCaseDTO.getBranch(),
                             branch.getObject().getSha()).json().toString();
 
             System.out.println(createBranchRes);
 
-            GitHubTestCase testCaseGitHub = toGithubPayload(testCaseDTO);
-
-            JsonReader jsonReader = Json.createReader(new StringReader(objectMapper.writeValueAsString(testCaseGitHub)));
+            JsonReader jsonReader = Json.createReader(new StringReader(objectMapper.writeValueAsString(gitHubTestCaseDTO)));
             JsonObject jsonObject = jsonReader.readObject();
             jsonReader.close();
 
@@ -72,7 +65,7 @@ public class TestCaseService {
                     .iterator()
                     .forEachRemaining(it -> list.add(extractValue(it)));
 
-            return list.stream().filter(it -> it.getName().endsWith(".json")).collect(Collectors.toList());
+            return list.stream().filter(it -> it.getName().endsWith(".yml")).collect(Collectors.toList());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -90,27 +83,5 @@ public class TestCaseService {
         caseResponse.setName(json.getString("name"));
         caseResponse.setContent(json.getString("content"));
         return caseResponse;
-    }
-
-    private GitHubTestCase toGithubPayload(TestCaseDTO testCaseDTO) throws JsonProcessingException {
-        ObjectMapper yaml = new ObjectMapper(new YAMLFactory());
-
-        GitHubTestCase testCaseGitHub = new GitHubTestCase();
-        testCaseGitHub.setMessage(testCaseDTO.getTitle());
-        testCaseGitHub.setBranch(testCaseDTO.getBranch());
-        testCaseGitHub.setPath(casesFolder + testCaseDTO.getFileName() + ".yml");
-
-        Committer committer = new Committer();
-        committer.setName(testCaseDTO.getUserName());
-        committer.setEmail(testCaseDTO.getEmail());
-
-        testCaseGitHub.setCommitter(committer);
-
-        TestCase testCase = new TestCase();
-        testCase.setTitle(testCaseDTO.getTitle());
-
-        testCaseGitHub.setContent(Base64.getEncoder().encodeToString(yaml.writeValueAsBytes(testCase)));
-
-        return testCaseGitHub;
     }
 }

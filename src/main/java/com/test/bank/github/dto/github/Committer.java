@@ -10,7 +10,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class Committer {
 
+    @ApiModelProperty(example = "Ivan Petrov")
     private String name;
+    @ApiModelProperty(example = "ivan_89@gmail.com")
     private String email;
 
 }

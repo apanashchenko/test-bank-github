@@ -10,17 +10,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class TestCaseDTO {
 
-    @ApiModelProperty(example = "Create new test case")
+    @ApiModelProperty(example = "User is able to login")
     private String title;
-    @ApiModelProperty(example = "Steve")
+    @ApiModelProperty(example = "Steve Ivanov")
     private String userName;
-    @ApiModelProperty(example = "steve@g.com")
-    private String email;
-    @ApiModelProperty(example = "login-test-case")
-    private String fileName;
-    @ApiModelProperty(example = "login-test-case")
-    private String branch;
-    @ApiModelProperty(example = "repo-name")
-    private String repoName;
 
 }
