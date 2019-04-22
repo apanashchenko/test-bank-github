@@ -10,6 +10,7 @@ import lombok.Setter;
 @NoArgsConstructor
 public class GitHubTestCaseDTO {
 
+    private Long testCaseId;
     private String message;
     @ApiModelProperty(example = "#1")
     private String branch;
