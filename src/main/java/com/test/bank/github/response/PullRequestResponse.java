@@ -10,5 +10,5 @@ import lombok.Setter;
 public class PullRequestResponse {
 
     private int id;
-    private String json;
+    private String diffUrl;
 }

@@ -6,8 +6,11 @@ import com.test.bank.github.dto.PullRequestDTO;
 import com.test.bank.github.response.PullRequestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import javax.json.JsonObject;
 import java.io.IOException;
 
 @Service
@@ -24,7 +27,9 @@ public class PullRequestService {
             Pull pullRequest = projectService.getRepo(pullRequestDTO.getRepoName()).pulls()
                     .create(pullRequestDTO.getTitle(), pullRequestDTO.getBranchName(), baseBranch);
 
-            return new PullRequestResponse(pullRequest.number(), pullRequest.json().toString());
+            String diff_url = pullRequest.json().getString("diff_url");
+
+            return new PullRequestResponse(pullRequest.number(), diff_url);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
