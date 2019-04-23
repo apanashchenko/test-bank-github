@@ -25,9 +25,15 @@ public class TestCaseController {
         return new ResponseEntity<>(singletonMap("path", path), HttpStatus.OK);
     }
 
-    @GetMapping("/cases/{repoName}")
+    @GetMapping("/{repoName}/cases")
     public List<TestCaseResponse> getAllCases(@PathVariable String repoName) {
         return testCaseService.getAllCases(repoName);
     }
+
+    @GetMapping("/{repoName}/case")
+    public TestCaseResponse getTestCase(@PathVariable String repoName, @RequestParam String fileName) {
+        return testCaseService.getTestCase(repoName, fileName);
+    }
+
 
 }
