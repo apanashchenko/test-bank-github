@@ -5,6 +5,7 @@ import com.jcabi.github.*;
 import com.test.bank.github.dto.github.Branch;
 import com.test.bank.github.dto.github.GitHubTestCaseDTO;
 import com.test.bank.github.response.TestCaseResponse;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,9 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,15 +41,8 @@ public class TestCaseService {
             gitHubTestCaseDTO.setPath(casesFolder + path);
 
             Repo repo = projectService.getRepo(gitHubTestCaseDTO.getRepoName());
-            String refJson = repo.git().references().get("refs/heads/" + baseBranch).json().toString();
 
-            Branch branch = objectMapper.readValue(refJson, Branch.class);
-
-            String createBranchRes = repo.git().references()
-                    .create("refs/heads/" + gitHubTestCaseDTO.getBranch(),
-                            branch.getObject().getSha()).json().toString();
-
-            System.out.println(createBranchRes);
+            createNewBranch(repo, gitHubTestCaseDTO.getBranch());
 
             JsonReader jsonReader = Json.createReader(new StringReader(objectMapper.writeValueAsString(gitHubTestCaseDTO)));
             JsonObject jsonObject = jsonReader.readObject();
@@ -57,6 +53,17 @@ public class TestCaseService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private String createNewBranch(Repo repo, String branchName) throws IOException {
+
+        String refJson = repo.git().references().get("refs/heads/" + baseBranch).json().toString();
+
+        Branch branch = objectMapper.readValue(refJson, Branch.class);
+
+        return repo.git().references()
+                .create("refs/heads/" + branchName,
+                        branch.getObject().getSha()).json().toString();
     }
 
     public List<TestCaseResponse> getAllCases(String repoName) {
@@ -90,13 +97,14 @@ public class TestCaseService {
 
     public TestCaseResponse getTestCase(String repoName, String fileName) {
         Repo repo = projectService.getRepo(repoName);
-        JsonObject json;
+        String result;
         try {
-            json = repo.contents().get(casesFolder + fileName).json();
+            InputStream raw = repo.contents().get(casesFolder + fileName).raw();
+            result = IOUtils.toString(raw, StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
-        return TestCaseResponse.of(fileName, json.getString("content"));
+        return TestCaseResponse.of(fileName, result);
     }
 }

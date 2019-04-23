@@ -23,7 +23,6 @@ public class PullRequestService {
 
     public PullRequestResponse createPullRequest(PullRequestDTO pullRequestDTO) {
         try {
-
             Repo repo = projectService.getRepo(pullRequestDTO.getRepoName());
             Pull pullRequest = repo.pulls().create(pullRequestDTO.getTitle(), pullRequestDTO.getBranchName(), baseBranch);
 
