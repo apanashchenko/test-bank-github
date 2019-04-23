@@ -1,16 +1,14 @@
 package com.test.bank.github.service;
 
-import com.jcabi.github.*;
+import com.jcabi.github.MergeState;
+import com.jcabi.github.Pull;
 import com.test.bank.github.dto.MergeRequestDTO;
 import com.test.bank.github.dto.PullRequestDTO;
 import com.test.bank.github.response.PullRequestResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import javax.json.JsonObject;
 import java.io.IOException;
 
 @Service

@@ -87,4 +87,16 @@ public class TestCaseService {
         caseResponse.setContent(json.getString("content"));
         return caseResponse;
     }
+
+    public TestCaseResponse getTestCase(String repoName, String fileName) {
+        Repo repo = projectService.getRepo(repoName);
+        JsonObject json;
+        try {
+            json = repo.contents().get(casesFolder + fileName).json();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        return TestCaseResponse.of(fileName, json.getString("content"));
+    }
 }
